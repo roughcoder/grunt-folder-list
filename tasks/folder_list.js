@@ -7,96 +7,103 @@
  */
 
 'use strict';
-var fs = require("fs"); //Load the filesystem module
-var path = require("path"); // Path tools
-var to = require("to") // JSON, YML convert
+var fs = require( "fs" ); //Load the filesystem module
+var path = require( "path" ); // Path tools
+var to = require( "to" ) // JSON, YML convert
 
-module.exports = function (grunt) {
+module.exports = function ( grunt ) {
 
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerMultiTask('folder_list', 'Returns the file, folder (or both) structure from a given source in JSON or YML', function () {
+    grunt.registerMultiTask( 'folder_list', 'Returns the file, folder (or both) structure from a given source in JSON or YML', function () {
         // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            files: true,
-            folders: true
-        });
+        var options = this.options( {
+            files   : true,
+            folders : true
+        } );
+
 
         // Iterate over all specified file groups.
-        this.files.forEach(function (f) {
+        this.files.forEach( function ( f ) {
 
-            var src = f.src.filter(function (filepath) {
+            // Create a cmd var even if not used to reduce errors
+            var cwd = '';
+            if ( f.cwd ) {
+                cwd = f.cwd;
+            }
+            var src = f.src.filter( function ( filepath ) {
                 // Warn on and remove invalid source files (if nonull was set).
-                if (!grunt.file.exists(filepath)) {
-                    grunt.log.warn('Source file "' + filepath + '" not found.');
+                if ( !grunt.file.exists( cwd + filepath ) ) {
+                    grunt.log.warn( 'Source file "' + cwd + filepath + '" not found.' );
                     return false;
                 } else {
                     return true;
                 }
-            })
+            } )
 
-
-            function getFilesizeInBytes(filename) {
-                var stats = fs.statSync(filename)
+            function getFilesizeInBytes( filename ) {
+                var stats = fs.statSync( filename )
                 var fileSizeInBytes = stats["size"]
                 return fileSizeInBytes / 1000000.0
             }
 
-            function getExtension(filename) {
-                var ext = path.extname(filename||'').split('.');
+            function getExtension( filename ) {
+                var ext = path.extname( filename || '' ).split( '.' );
                 return ext[ext.length - 1];
             }
 
-
             var structure = [],
                 tempInfo = {},
-                format = getExtension(f.dest);
+                format = getExtension( f.dest );
+
+
 
             // Parse files
-            src.map(function (filename) {
+            src.map( function ( filename ) {
 
                 // Manage Directories
-                if (grunt.file.isDir(filename)) {
+                if ( grunt.file.isDir( cwd + filename ) ) {
                     tempInfo = {
-                        location: filename,
-                        type: 'dir',
-                        level: filename.split('/').length
+                        location : filename,
+                        type     : 'dir',
+                        depth    : filename.split( '/' ).length
                     }
-                    if (options.folders) {
-                        structure.push(tempInfo);
+                    if ( options.folders ) {
+                        structure.push( tempInfo );
                     }
 
                 }
 
                 // Manage Files
-                if (grunt.file.isFile(filename)) {
+                if ( grunt.file.isFile( cwd + filename ) ) {
                     tempInfo = {
-                        location: filename,
-                        filename: path.basename(filename),
-                        type: 'file',
-                        size: getFilesizeInBytes(filename),
-                        level: filename.split('/').length
+                        location : filename,
+                        filename : path.basename( cwd + filename ),
+                        type     : 'file',
+                        size     : getFilesizeInBytes( cwd + filename ),
+                        depth    : filename.split( '/' ).length-1,
+                        filetype : getExtension( cwd + filename )
                     }
-                    if (options.files) {
-                        structure.push(tempInfo);
+                    if ( options.files ) {
+                        structure.push( tempInfo );
                     }
                 }
-            });
+            } );
 
+            var contents = JSON.stringify( structure );
 
-            var contents = JSON.stringify(structure);
-
-            if (format === 'yml'){
-                contents = to.format.yaml.stringify(contents);
+            // Check if yml
+            if ( format === 'yml' || format === 'ymal' ) {
+                contents = to.format.yaml.stringify( contents );
             }
 
-            grunt.file.write(f.dest, contents);
+            grunt.file.write( f.dest, contents );
 
             // Print a success message.
-            grunt.log.writeln('File "' + f.dest + '" created.');
+            grunt.log.writeln( 'File "' + f.dest + '" created.' );
 
-        });
-    });
+        } );
+    } );
 
 };

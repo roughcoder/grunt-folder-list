@@ -1,48 +1,69 @@
 'use strict';
 
-var grunt = require('grunt');
+var grunt = require( 'grunt' );
 
 /*
-  ======== A Handy Little Nodeunit Reference ========
-  https://github.com/caolan/nodeunit
+ ======== A Handy Little Nodeunit Reference ========
+ https://github.com/caolan/nodeunit
 
-  Test methods:
-    test.expect(numAssertions)
-    test.done()
-  Test assertions:
-    test.ok(value, [message])
-    test.equal(actual, expected, [message])
-    test.notEqual(actual, expected, [message])
-    test.deepEqual(actual, expected, [message])
-    test.notDeepEqual(actual, expected, [message])
-    test.strictEqual(actual, expected, [message])
-    test.notStrictEqual(actual, expected, [message])
-    test.throws(block, [error], [message])
-    test.doesNotThrow(block, [error], [message])
-    test.ifError(value)
-*/
+ Test methods:
+ test.expect(numAssertions)
+ test.done()
+ Test assertions:
+ test.ok(value, [message])
+ test.equal(actual, expected, [message])
+ test.notEqual(actual, expected, [message])
+ test.deepEqual(actual, expected, [message])
+ test.notDeepEqual(actual, expected, [message])
+ test.strictEqual(actual, expected, [message])
+ test.notStrictEqual(actual, expected, [message])
+ test.throws(block, [error], [message])
+ test.doesNotThrow(block, [error], [message])
+ test.ifError(value)
+ */
 
 exports.folder_list = {
-  setUp: function(done) {
-    // setup here if necessary
-    done();
-  },
-  default_options: function(test) {
-    test.expect(1);
+    setUp           : function ( done ) {
+        // setup here if necessary
+        done();
+    },
+    default_options : function ( test ) {
+        test.expect( 2 );
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
+        var actual = grunt.file.read( 'tmp/default_options.json' );
+        var expected = grunt.file.read( 'test/expected/default_options.json' );
+        test.equal( actual, expected, 'should describe what the default behavior is.' );
 
-    test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
+        var actual = grunt.file.read( 'tmp/default_options.yml' );
+        var expected = grunt.file.read( 'test/expected/default_options.yml' );
+        test.equal( actual, expected, 'should describe what the default behavior is.' );
 
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
+        test.done();
+    },
+    custom_files_options  : function ( test ) {
+        test.expect( 2 );
 
-    test.done();
-  },
+        var actual = grunt.file.read( 'tmp/custom_files_options.json' );
+        var expected = grunt.file.read( 'test/expected/custom_files_options.json' );
+        test.equal( actual, expected, 'should describe what the custom option(s) behavior is.' );
+
+        var actual = grunt.file.read( 'tmp/custom_files_options.yml' );
+        var expected = grunt.file.read( 'test/expected/custom_files_options.yml' );
+        test.equal( actual, expected, 'should describe what the custom option(s) behavior is.' );
+
+        test.done();
+    },
+    custom_folder_options : function ( test ) {
+        test.expect( 2 );
+
+        var actual = grunt.file.read( 'tmp/custom_folders_options.json' );
+        var expected = grunt.file.read( 'test/expected/custom_folders_options.json' );
+        test.equal( actual, expected, 'should describe what the custom option(s) behavior is.' );
+
+        var actual = grunt.file.read( 'tmp/custom_folders_options.yml' );
+        var expected = grunt.file.read( 'test/expected/custom_folders_options.yml' );
+        test.equal( actual, expected, 'should describe what the custom option(s) behavior is.' );
+
+        test.done();
+    },
 };

@@ -1,6 +1,6 @@
 # grunt-folder-list
 
-> Returns the file, folder or both structure from a given source in JSON or YML
+> Returns the file, folder or both structure from a given source in JSON or YML.  Includes depth, file size and file type.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.2`
@@ -22,14 +22,45 @@ grunt.loadNpmTasks('grunt-folder-list');
 ### Overview
 In your project's Gruntfile, add a section named `folder_list` to the data object passed into `grunt.initConfig()`.
 
+#### File Data
+The plugin will return the following for each file it finds.
+```json
+{
+	"location" : "anothefolder/anotherfile.js",
+  "filename" : "anotherfile.js",
+  "filetype" : "js"
+  "type"     : "file",
+  "size"     : 0,
+  "depth"    : 1,
+}
+```
+#### Folder Data
+The plugin will return the following for each folder it finds.
+```json
+{
+	"location" : "anothefolder",
+	"type"     : "dir",
+ 	"depth"    : 1
+}
+```
+
+#### Simple Setup
+
 ```js
 grunt.initConfig({
   folder_list: {
     options: {
-      // Task-specific options go here.
+      // Default options, you dont need these they are just to highlight the options available.
+      files: true,
+	    folders: true
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
+    files: {
+			// Create a JSON file (.json)
+			'tmp/fixtures.json': ['test/fixtures/**'],
+			// Create a YML file (.yml)
+			'tmp/fixtures.yml': ['test/fixtures/**'],
+      // Create a YML file (.ymal)
+			'tmp/fixtures.ymal': ['test/fixtures/**'],
     },
   },
 });
@@ -37,48 +68,68 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### options.files
+Type: `Boolean`
+Default value: true
 
-A string value that is used to do something with whatever.
+A boolean value to turn off listing files within your output.  Defaults to true.
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### options.folders
+Type: `Boolean`
+Default value: true
 
-A string value that is used to do something else with whatever else.
+A boolean value to turn off listing folders within your output.  Defaults to true.
 
 ### Usage Examples
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+#### Setup using CWD.
+
+Useful when you want your file and folder locations to start from a set level.
 
 ```js
 grunt.initConfig({
-  folder_list: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+  default_options : {
+    options : {
+      files:  true,
+      folder: true
     },
-  },
+    files : [
+          {
+              src  : ['**'],
+              dest : 'tmp/fixtures.json',
+              cwd  : 'test/fixtures'
+          }
+      ]
+    },
 });
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+#### File & Folder Filters
+
+As with most things Grunt, you can do wildcard selections to ignore certain folders or files.  
+
+The below code will create 2 files (1 JSON and 1 YML).  The JSON file will only log HTML files.  The YML will only list files and folders within folders starting with 'asset'.
 
 ```js
 grunt.initConfig({
-  folder_list: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
+  default_options : {
+    options : {
+      files:  true,
+      folder: true
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+    files : [
+          {
+              src  : ['**/*.html'],
+              dest : 'tmp/htmlfiles.json',
+              cwd  : 'test/fixtures'
+          },
+					{
+              src  : ['asset*/**'],
+              dest : 'tmp/assets.yml',
+              cwd  : 'test/fixtures'
+          }
+      ]
     },
-  },
 });
 ```
 
@@ -86,4 +137,5 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+v1.0.0 - 15 Feb 2014 - Tweaks, Docs, Examples, Tests
+v0.1.0 - 14 Feb 2014 - Initial Base
