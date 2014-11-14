@@ -91,7 +91,7 @@ grunt.initConfig({
   default_options : {
     options : {
       files:  true,
-      folder: true
+      folders: true
     },
     files : [
           {
