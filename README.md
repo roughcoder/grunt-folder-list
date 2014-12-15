@@ -88,19 +88,17 @@ Useful when you want your file and folder locations to start from a set level.
 
 ```js
 grunt.initConfig({
-  default_options : {
+  folder_list : {
     options : {
       files:  true,
       folders: true
     },
-    files : [
-          {
-              src  : ['**'],
-              dest : 'tmp/fixtures.json',
-              cwd  : 'test/fixtures'
-          }
-      ]
-    },
+    files : {
+      src  : ['**'],
+      dest : 'tmp/fixtures.json',
+      cwd  : 'test/fixtures'
+    }
+  }  
 });
 ```
 
