@@ -56,6 +56,10 @@ module.exports = function (grunt) {
                 return ext[ext.length - 1];
             }
 
+            function getFilename(filename){
+                var ext = path.basename(filename || '');
+                return ext;
+            }
 
             // Output variables
             var structure = [],
@@ -88,7 +92,8 @@ module.exports = function (grunt) {
                         type: 'file',
                         size: getFilesizeInBytes(cwd + filename),
                         depth: filename.split('/').length - 1,
-                        filetype: getExtension(cwd + filename)
+                        filetype: getExtension(cwd + filename),
+                        name: getFilename(cwd + filename)
                     }
                     if (options.files) {
                         structure.push(tempInfo);
